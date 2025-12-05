@@ -1,0 +1,102 @@
+<div class="space-y-8 pb-20">
+  
+  <!-- Header -->
+  <div class="flex flex-col items-center gap-6 border-b border-slate-800 pb-8">
+    <div class="w-full text-center">
+      <h1 class="text-3xl font-bold text-white">Bascule et décroche des récompenses</h1>
+    </div>
+    <div class="flex items-center justify-center w-full">
+       <div class="relative w-full md:w-64">
+         <svg class="search-icon absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+         </svg>
+         <input 
+            type="text"
+            placeholder="Rechercher un défi..." 
+            class="search-input pl-10 bg-slate-900 border-slate-700 text-white placeholder:text-slate-600 focus:ring-emerald-500/50"
+            [(ngModel)]="searchQuery"
+            (input)="onSearchChange()"
+         />
+       </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
+    <button
+      *ngFor="let cat of categories"
+      (click)="onCategoryChange(cat)"
+      [class.active]="selectedCategory === cat"
+      [class.inactive]="selectedCategory !== cat"
+      class="filter-button"
+    >
+      {{ cat === 'All' ? 'Tout Voir' : cat }}
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-12">
+    <p class="text-slate-400">Chargement des défis...</p>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div
+      *ngFor="let challenge of filteredChallenges; trackBy: trackByChallengeId"
+      [@fadeInScale]
+      class="challenge-card-wrapper"
+    >
+      <a [routerLink]="['/challenge-details']" [queryParams]="{id: challenge.id}" class="challenge-link">
+        <div class="challenge-card group cursor-pointer h-full">
+          <div class="card-content p-6 space-y-4">
+            <div class="flex justify-between items-start mb-4">
+              <div class="logo-container w-16 h-16 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm">
+                <img 
+                  *ngIf="challenge.logo_url" 
+                  [src]="challenge.logo_url" 
+                  [alt]="challenge.alternative_name" 
+                  class="logo-image w-full h-full object-contain" 
+                />
+                <div *ngIf="!challenge.logo_url" class="logo-placeholder text-slate-950 font-bold text-xs">
+                  {{ challenge.alternative_name.slice(0, 2) }}
+                </div>
+              </div>
+              <div [class]="'category-badge ' + getCategoryColors(challenge.category)">
+                {{ challenge.category }}
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="challenge-title text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">
+                {{ challenge.title }}
+              </h3>
+              <p class="challenge-alternative text-emerald-500 text-sm font-medium mt-1">
+                Alternative : {{ challenge.alternative_name }}
+              </p>
+            </div>
+
+            <p class="challenge-description text-slate-400 text-sm line-clamp-2">
+              {{ challenge.description }}
+            </p>
+
+            <div class="pt-4 flex items-center justify-between border-t border-slate-800/50">
+              <span class="points text-xs text-slate-500 font-mono">+{{ challenge.points }} PTS</span>
+              <div class="details-link flex items-center gap-1 text-sm font-medium text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                Voir détails 
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredChallenges.length === 0" class="text-center py-12">
+    <p class="text-slate-400">Aucun défi trouvé.</p>
+  </div>
+
+</div>

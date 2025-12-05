@@ -1,0 +1,178 @@
+<div class="space-y-8">
+  
+  <!-- Stats Overview -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Main Progress -->
+    <div class="card-main-progress md:col-span-2 bg-slate-900 border-slate-800 relative overflow-hidden">
+      <div class="card-bg-gradient absolute top-0 right-0 p-32 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+      <div class="card-header p-6 border-b border-slate-800">
+        <h2 class="card-title text-white flex justify-between items-center">
+          <span>Niveau de Résistance</span>
+          <span class="text-emerald-400 font-mono">{{ Math.round(progressPercentage) }}%</span>
+        </h2>
+      </div>
+      <div class="card-content p-6 space-y-6">
+        <!-- Progress Bar -->
+        <div class="progress-container">
+          <div class="progress-bar bg-slate-800 h-4 rounded-full overflow-hidden">
+            <div 
+              class="progress-indicator h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500"
+              [style.width.%]="progressPercentage"
+            ></div>
+          </div>
+        </div>
+        
+        <div class="flex justify-between text-sm text-slate-400">
+          <span>{{ earnedPoints }} Points gagnés</span>
+          <span>{{ totalPoints }} Points possibles</span>
+        </div>
+        
+        <!-- Completion Status -->
+        <div 
+          *ngIf="isCompleted" 
+          [@fadeInUp]
+          class="completion-card p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-4"
+        >
+          <div class="p-2 bg-emerald-500/20 rounded-full">
+            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold text-white">Félicitations, Maître Résistant !</h4>
+            <p class="text-emerald-400 text-sm">Vous avez complété la bascule. Votre récompense est débloquée.</p>
+          </div>
+          <button class="ml-auto bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg transition-colors">
+            Récompense
+          </button>
+        </div>
+        
+        <div 
+          *ngIf="!isCompleted" 
+          class="locked-card p-4 bg-slate-800/50 border border-slate-700 rounded-lg flex items-center gap-4 opacity-75"
+        >
+          <div class="p-2 bg-slate-700 rounded-full">
+            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-300">Récompense Verrouillée</h4>
+            <p class="text-slate-500 text-sm">Complétez toutes les tâches pour obtenir votre statut.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="card-chart bg-slate-900 border-slate-800">
+      <div class="card-header p-6 border-b border-slate-800">
+        <h2 class="card-title text-white text-center">Répartition</h2>
+      </div>
+      <div class="card-content p-6">
+        <div class="chart-container h-[200px] flex items-center justify-center">
+          <svg class="pie-chart" width="200" height="200" viewBox="0 0 200 200">
+            <g transform="translate(100, 100)">
+              <path
+                *ngFor="let stat of stats; let i = index"
+                [attr.data-index]="i"
+                [attr.fill]="stat.color"
+                [attr.stroke-width]="0"
+                class="pie-segment"
+                [attr.d]="getPiePath(stat, i)"
+              />
+            </g>
+          </svg>
+        </div>
+        <div class="chart-legend flex justify-center gap-4 text-xs text-slate-400 mt-2">
+          <div *ngFor="let stat of stats" class="flex items-center gap-1">
+            <div class="w-2 h-2 rounded-full" [style.background-color]="stat.color"></div>
+            {{ stat.name }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks List -->
+  <div class="space-y-6">
+    <h2 class="text-2xl font-bold text-white">Vos Missions</h2>
+    
+    <div *ngIf="loadingChallenges" class="text-center py-12">
+      <p class="text-slate-400">Chargement des missions...</p>
+    </div>
+    
+    <div class="grid gap-4">
+      <div
+        *ngFor="let challenge of challenges; trackBy: trackByChallengeId"
+        [@slideIn]
+        [class.task-done]="isTaskDone(challenge.id)"
+        [class.task-todo]="!isTaskDone(challenge.id)"
+        class="task-card group p-6 rounded-xl border transition-all duration-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+      >
+        <div class="flex items-start gap-4">
+          <div 
+            [class.status-done]="isTaskDone(challenge.id)"
+            [class.status-todo]="!isTaskDone(challenge.id)"
+            class="status-icon mt-1 w-8 h-8 rounded-full flex items-center justify-center border"
+          >
+            <svg 
+              *ngIf="isTaskDone(challenge.id)"
+              class="w-5 h-5 text-white" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div *ngIf="!isTaskDone(challenge.id)" class="w-3 h-3 rounded-full bg-slate-600"></div>
+          </div>
+          <div>
+            <h3 
+              [class.text-emerald-400]="isTaskDone(challenge.id)"
+              [class.text-white]="!isTaskDone(challenge.id)"
+              class="font-semibold text-lg"
+            >
+              {{ challenge.title }}
+            </h3>
+            <p class="text-slate-400 text-sm">{{ challenge.description }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4 w-full md:w-auto pl-12 md:pl-0">
+          <span 
+            *ngIf="getTaskStatus(challenge.id) === 'validated'"
+            class="status-badge-validated text-emerald-500 font-medium text-sm flex items-center gap-2 px-3 py-1 bg-emerald-500/10 rounded-full"
+          >
+            Validé
+          </span>
+          <span 
+            *ngIf="getTaskStatus(challenge.id) === 'submitted'"
+            class="status-badge-submitted text-yellow-500 font-medium text-sm flex items-center gap-2 px-3 py-1 bg-yellow-500/10 rounded-full"
+          >
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            En attente
+          </span>
+          <a 
+            *ngIf="getTaskStatus(challenge.id) === 'todo'"
+            [routerLink]="['/submit-proof']"
+            [queryParams]="{id: challenge.id}"
+            class="validate-button border border-slate-600 text-slate-300 hover:text-white hover:bg-slate-800 hover:border-emerald-500 transition-colors px-4 py-2 rounded-lg flex items-center gap-2 w-full md:w-auto justify-center"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            Valider
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="!loadingChallenges && challenges.length === 0" class="text-center py-12">
+      <p class="text-slate-400">Aucune mission disponible.</p>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,137 @@
+<div class="challenge-details-container" *ngIf="!isLoading && challenge" [@fadeIn]>
+  
+  <!-- Back Button -->
+  <button (click)="goBack()" class="back-button flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+    Retour aux défis
+  </button>
+
+  <!-- Header Section -->
+  <div class="header-section" [@slideInUp]>
+    <div class="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
+      <div class="logo-container w-20 h-20 bg-white rounded-2xl flex items-center justify-center p-4 shadow-lg">
+        <img 
+          *ngIf="challenge.logo_url" 
+          [src]="challenge.logo_url" 
+          [alt]="challenge.alternative_name" 
+          class="w-full h-full object-contain" 
+        />
+        <div *ngIf="!challenge.logo_url" class="text-slate-950 font-bold text-2xl">
+          {{ challenge.alternative_name.slice(0, 2) }}
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="flex items-center gap-3 mb-2">
+          <h1 class="text-3xl md:text-4xl font-bold text-white">{{ challenge.title }}</h1>
+          <span class="category-badge" [attr.data-category]="challenge.category">
+            {{ challenge.category }}
+          </span>
+        </div>
+        <p class="text-xl text-emerald-400 font-medium mb-2">Alternative : {{ challenge.alternative_name }}</p>
+        <p class="text-slate-400 text-lg">{{ challenge.description }}</p>
+        <div class="mt-4 flex items-center gap-4">
+          <span class="points-badge px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 font-mono font-semibold">
+            +{{ challenge.points }} Points
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Description -->
+  <div class="content-section" *ngIf="challenge.detailed_description" [@slideInUp]>
+    <div class="card bg-slate-900/50 border border-slate-800 rounded-xl p-6 mb-8">
+      <h2 class="text-2xl font-bold text-white mb-4">À propos de {{ challenge.alternative_name }}</h2>
+      <p class="text-slate-300 leading-relaxed text-lg">{{ challenge.detailed_description }}</p>
+    </div>
+  </div>
+
+  <!-- Benefits Section -->
+  <div class="benefits-section" *ngIf="challenge.benefits && challenge.benefits.length > 0" [@slideInUp]>
+    <div class="card bg-slate-900/50 border border-slate-800 rounded-xl p-6 mb-8">
+      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+        <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Pourquoi {{ challenge.alternative_name }} est meilleur
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div 
+          *ngFor="let benefit of challenge.benefits; let i = index"
+          class="benefit-item p-4 bg-slate-800/50 border border-slate-700 rounded-lg hover:border-emerald-500/50 transition-colors"
+        >
+          <div class="flex items-start gap-3">
+            <div class="benefit-icon flex-shrink-0 w-6 h-6 bg-emerald-500/20 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <p class="text-slate-300 leading-relaxed">{{ benefit }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- YouTube Video Section -->
+  <div class="video-section" *ngIf="challenge.youtube_video_id" [@slideInUp]>
+    <div class="card bg-slate-900/50 border border-slate-800 rounded-xl p-6 mb-8">
+      <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+        <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Tutoriel d'installation
+      </h2>
+      <div class="video-wrapper relative w-full" style="padding-bottom: 56.25%;">
+        <iframe
+          class="absolute top-0 left-0 w-full h-full rounded-lg"
+          [src]="getYouTubeEmbedUrl(challenge.youtube_video_id)"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <p class="text-slate-400 text-sm mt-4">
+        Cette vidéo vous guidera étape par étape pour installer et configurer {{ challenge.alternative_name }}.
+      </p>
+    </div>
+  </div>
+
+  <!-- Call to Action -->
+  <div class="cta-section" [@slideInUp]>
+    <div class="card bg-gradient-to-br from-emerald-900/20 to-slate-900 border border-emerald-500/20 rounded-xl p-8 text-center">
+      <h3 class="text-2xl font-bold text-white mb-4">Prêt à faire la bascule ?</h3>
+      <p class="text-slate-400 mb-6 max-w-2xl mx-auto">
+        Rejoignez la résistance numérique et reprenez le contrôle de votre vie digitale.
+      </p>
+      <a 
+        [routerLink]="['/submit-proof']"
+        [queryParams]="{id: challenge.id}"
+        class="cta-button inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors shadow-lg shadow-emerald-500/25"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+        Valider cette mission
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-container text-center py-20">
+  <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+  <p class="text-slate-400 mt-4">Chargement des détails...</p>
+</div>
+
+<!-- Not Found State -->
+<div *ngIf="!isLoading && !challenge" class="not-found-container text-center py-20">
+  <p class="text-slate-400 text-xl mb-4">Défi non trouvé</p>
+  <button (click)="goBack()" class="text-emerald-400 hover:text-emerald-300">
+    Retour aux défis
+  </button>
+</div>

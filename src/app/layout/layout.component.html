@@ -1,0 +1,130 @@
+<div class="min-h-screen bg-slate-950 text-slate-50 font-sans">
+  
+  <!-- Navigation -->
+  <nav [class.scrolled]="scrolled" class="navbar fixed w-full z-50 transition-all duration-300">
+    <div class="nav-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <!-- Logo -->
+        <a routerLink="/home" class="logo-link flex items-center gap-2 group">
+          <div class="logo-icon w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/20 transition-transform group-hover:scale-105">
+            <svg class="w-6 h-6 text-slate-950 fill-current" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+            </svg>
+          </div>
+          <div class="flex flex-col">
+            <span class="logo-text text-xl font-bold tracking-tight leading-none">BASCUL<span class="text-emerald-400">TECH</span></span>
+            <span class="logo-subtitle text-[10px] text-slate-400 tracking-widest uppercase">Résistance Numérique</span>
+          </div>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-8">
+          <a
+            *ngFor="let item of navItems"
+            [routerLink]="item.path"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: false}"
+            class="nav-link flex items-center gap-2 text-sm font-medium transition-colors duration-200 relative"
+          >
+            <svg *ngIf="item.icon === 'shield'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            <svg *ngIf="item.icon === 'map'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+            <svg *ngIf="item.icon === 'dashboard'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            {{ (item.label.toLowerCase() === 'defis' || item.label.toLowerCase() === 'défis') ? "basculer vers l'open source" : item.label }}
+            <span *ngIf="isActive(item.path)" class="nav-underline absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400"></span>
+          </a>
+          <button 
+            (click)="handleLogout()"
+            class="logout-button ml-4 px-4 py-2 text-xs font-medium text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 rounded-full transition-all"
+          >
+            Déconnexion
+          </button>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button 
+          class="mobile-toggle md:hidden text-slate-400 hover:text-white"
+          (click)="toggleMobileMenu()"
+          aria-label="Toggle menu"
+        >
+          <svg *ngIf="!isMobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg *ngIf="isMobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div 
+      [@mobileMenu]="isMobileMenuOpen ? 'open' : 'closed'"
+      class="mobile-menu md:hidden bg-slate-900 border-b border-slate-800 overflow-hidden"
+    >
+      <div class="px-4 py-4 space-y-2">
+        <a
+          *ngFor="let item of navItems"
+          [routerLink]="item.path"
+          (click)="closeMobileMenu()"
+          [class.active]="isActive(item.path)"
+          class="mobile-nav-link flex items-center gap-3 px-4 py-3 rounded-lg transition-colors"
+        >
+          <svg *ngIf="item.icon === 'shield'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <svg *ngIf="item.icon === 'map'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+          </svg>
+          <svg *ngIf="item.icon === 'dashboard'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+          {{ (item.label.toLowerCase() === 'defis' || item.label.toLowerCase() === 'défis') ? "basculer vers l'open source" : item.label }}
+        </a>
+        <button 
+          (click)="handleLogout(); closeMobileMenu()"
+          class="mobile-logout w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition-colors text-left"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Déconnexion
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content Wrapper -->
+  <main class="main-content pt-20 min-h-screen relative overflow-hidden">
+    <!-- Background Gradients -->
+    <div class="background-gradients fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+      <div class="gradient-1 absolute top-0 left-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl mix-blend-screen"></div>
+      <div class="gradient-2 absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl mix-blend-screen"></div>
+    </div>
+    
+    <div class="content-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer border-t border-slate-800 bg-slate-950 py-12 mt-12">
+    <div class="footer-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+        </svg>
+        <span class="text-slate-400 font-medium">BASCUL<span class="text-white">TECH</span></span>
+      </div>
+      <p class="footer-text text-slate-500 text-sm text-center md:text-right">
+        Pour un numérique inclusif, responsable et durable.<br/>
+        Inspiré par l'initiative NIRD.
+      </p>
+    </div>
+  </footer>
+</div>
