@@ -1,0 +1,144 @@
+<div class="reward-container">
+  <!-- Header & Demo Toggle -->
+  <div class="header-section">
+    <div>
+      <h1 class="header-title">
+        🎁 Centre de Récompenses
+      </h1>
+      <p class="header-subtitle">Votre engagement citoyen mérite d'être valorisé.</p>
+    </div>
+    
+    <div class="profile-selector">
+      <span class="profile-label">Quel est votre profil ?</span>
+      <div class="profile-buttons">
+        <button 
+          [class.active]="demoUserType === 'student'"
+          (click)="setDemoUserType('student')"
+          class="profile-btn profile-btn-student"
+        >
+          <span class="profile-icon">🎓</span>
+          Je suis étudiant
+        </button>
+        <button 
+          [class.active]="demoUserType === 'standard'"
+          (click)="setDemoUserType('standard')"
+          class="profile-btn profile-btn-standard"
+        >
+          <span class="profile-icon">👤</span>
+          Je ne suis pas étudiant
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student View -->
+  <div *ngIf="demoUserType === 'student'" class="view-section student-view">
+    <div class="student-grid">
+      <!-- Academic Bonus Card -->
+      <div class="card card-emerald">
+        <div class="card-glow"></div>
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">🎓 Bonus Académique</h2>
+            <p class="card-description">Partenariat Éducation Nationale</p>
+          </div>
+          <div class="card-icon-box">📈</div>
+        </div>
+        <div class="card-content">
+          <div class="bonus-display">
+            <div class="bonus-value">+{{ gradeBonus }}</div>
+            <div class="bonus-label">Points sur la moyenne</div>
+          </div>
+          <div class="info-box">
+            <p>Ce bonus est calculé en temps réel selon votre progression. Complétez 100% des défis pour atteindre le bonus maximum de +0.5.</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button 
+            class="claim-btn claim-btn-emerald"
+            [disabled]="progressPercentage < 100"
+            (click)="handleClaim()"
+          >
+            <span *ngIf="progressPercentage < 100">
+              Débloquer à 100% ({{ getRemainingPercentage() }}% restants)
+            </span>
+            <span *ngIf="progressPercentage >= 100">
+              Réclamer mon Bonus
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- How It Works -->
+      <div class="info-section">
+        <div class="how-it-works">
+          <h3 class="info-title">🎓 Comment ça marche ?</h3>
+          <ul class="steps-list">
+            <li class="step"><span class="step-number">1</span> Complétez les défis de la feuille de route.</li>
+            <li class="step"><span class="step-number">2</span> Validez vos preuves dans le tableau de bord.</li>
+            <li class="step"><span class="step-number">3</span> Une fois à 100%, téléchargez votre certificat signé.</li>
+            <li class="step"><span class="step-number">4</span> Présentez-le à votre scolarité pour application du bonus.</li>
+          </ul>
+        </div>
+        
+        <div class="quote-section">
+          <p class="quote-text">"L'engagement des étudiants pour le numérique libre est un pilier de notre souveraineté future."</p>
+          <p class="quote-author">- Ministère de l'Enseignement Supérieur</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Standard View -->
+  <div *ngIf="demoUserType === 'standard'" class="view-section standard-view">
+    <div class="rewards-header">
+      <h2 class="rewards-title">Boutique Partenaire</h2>
+      <span class="badge">Offres Citoyennes</span>
+    </div>
+    
+    <div class="rewards-grid">
+      <div 
+        *ngFor="let reward of standardRewards"
+        class="reward-card"
+        [class.unlocked]="isRewardUnlocked(reward.unlockAt)"
+        [class.locked]="!isRewardUnlocked(reward.unlockAt)"
+      >
+        <div *ngIf="!isRewardUnlocked(reward.unlockAt)" class="lock-overlay">
+          <div class="lock-icon">🔒</div>
+          <span class="lock-text">Débloqué à {{ reward.unlockAt }}%</span>
+        </div>
+        
+        <div class="reward-content">
+          <div class="reward-icon-box" [class.unlocked]="isRewardUnlocked(reward.unlockAt)">
+            <span *ngIf="reward.icon === 'shopping-bag'">🛍️</span>
+            <span *ngIf="reward.icon === 'lock'">🔐</span>
+            <span *ngIf="reward.icon === 'user-circle'">👤</span>
+            <span *ngIf="reward.icon === 'zap'">⚡</span>
+          </div>
+          <div>
+            <h3 class="reward-title">{{ reward.title }}</h3>
+            <p class="reward-desc">{{ reward.desc }}</p>
+          </div>
+        </div>
+
+        <button 
+          class="reward-btn"
+          [disabled]="!isRewardUnlocked(reward.unlockAt)"
+          [class.disabled]="!isRewardUnlocked(reward.unlockAt)"
+          (click)="handleClaim()"
+        >
+          {{ isRewardUnlocked(reward.unlockAt) ? 'Obtenir le code' : 'Verrouillé' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Partnership Section -->
+    <div class="partnership-section">
+      <div>
+        <h3 class="partnership-title">Vous représentez une entreprise ?</h3>
+        <p class="partnership-text">Devenez partenaire de la transition numérique et proposez des avantages à notre communauté de résistants.</p>
+      </div>
+      <button class="partnership-btn">Devenir Partenaire</button>
+    </div>
+  </div>
+</div>

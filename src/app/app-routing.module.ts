@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { TasksComponent } from './tasks/tasks.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ChallengeDetailsComponent } from './challenge-details/challenge-details.component';
+import { RewardComponent } from './reward/reward.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -11,7 +12,8 @@ const routes: Routes = [
   { path: 'challenges', component: TasksComponent }, // Alias for challenges route
   { path: 'challenge-details', component: ChallengeDetailsComponent },
   { path: 'dashboard', component: DashboardComponent },
-  { path: '', redirectTo: '/home', pathMatch: 'full' }
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'reward', component: RewardComponent },
 ];
 
 @NgModule({

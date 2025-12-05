@@ -1,6 +1,12 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
@@ -18,11 +24,9 @@ interface NavItem {
     trigger('mobileMenu', [
       state('closed', style({ opacity: 0, height: 0, overflow: 'hidden' })),
       state('open', style({ opacity: 1, height: 'auto' })),
-      transition('closed <=> open', [
-        animate('0.3s ease-in-out')
-      ])
-    ])
-  ]
+      transition('closed <=> open', [animate('0.3s ease-in-out')]),
+    ]),
+  ],
 })
 export class LayoutComponent implements OnInit, OnDestroy {
   isMobileMenuOpen = false;
@@ -34,6 +38,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     { label: 'Home', path: '/home', icon: 'shield' },
     { label: 'Défis', path: '/challenges', icon: 'map' },
     { label: 'Tableau de Bord', path: '/dashboard', icon: 'dashboard' },
+    { label: 'Récompenses', path: '/reward', icon: 'gift' },
   ];
 
   constructor(private router: Router) {}
@@ -41,12 +46,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Track current route
     this.routerSubscription = this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.currentPath = event.url;
         this.isMobileMenuOpen = false; // Close mobile menu on navigation
       });
-    
+
     this.currentPath = this.router.url;
   }
 

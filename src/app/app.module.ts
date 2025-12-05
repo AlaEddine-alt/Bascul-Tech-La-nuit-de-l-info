@@ -11,6 +11,7 @@ import { TasksComponent } from './tasks/tasks.component';
 import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ChallengeDetailsComponent } from './challenge-details/challenge-details.component';
+import { RewardComponent } from './reward/reward.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ChallengeDetailsComponent } from './challenge-details/challenge-details
     TasksComponent,
     LayoutComponent,
     DashboardComponent,
-    ChallengeDetailsComponent
+    ChallengeDetailsComponent,
+    RewardComponent
   ],
   imports: [
     BrowserModule,
